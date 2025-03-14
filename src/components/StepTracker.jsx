@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+import ProgressBar from "./ProgressBar";
+import Motivator from "./Motivator";
+import HabitHelper from "./HabitHelper";
+import ReflectionSection from "./ReflectionSection";
 
 function StepTracker() {
      const [goal, setGoal] = useState(() => {
@@ -103,28 +107,6 @@ function StepTracker() {
                     <p>
                          Progress: {completePercentage}% complete
                     </p>
-               )}
-
-               {/* Progress Bar */}
-               {goal && (
-               <div style={{ width: "100%", background: "#e0e0e0", borderRadius: "10px", margin: "10px 0", position: "relative", height: "25px" }}>
-               <div
-                    style={{
-                    width: `${completePercentage}%`,
-                    background: completePercentage === "100.0" ? "linear-gradient(90deg, #4CAF50, #2E7D32)" : "linear-gradient(90deg, #007bff, #0056b3)",
-                    height: "100%",
-                    borderRadius: "10px",
-                    transition: "width 0.5s ease-in-out",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontWeight: "bold",
-                    color: "#fff",
-                    }}
-               >
-                    {completePercentage}%
-               </div>
-               </div>
                )}
 
                {/* steps section */}
