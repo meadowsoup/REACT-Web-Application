@@ -1,58 +1,60 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
+// Function to fetch quote
+const fetchQuote = async () => {
+  const url = 'https://favqs.com/api/qotd';
+  const apiKey = '61aeb5387f1ca3848015262eda617277'; // Your API key
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `${apiKey}`, // Authorization header
+      },
+    });
+    const data = await response.json();
+    if (data && data.quote) {
+      return data.quote.body; // Return the quote text
+    } else {
+      throw new Error('No quote found');
+    }
+  } catch (error) {
+    throw new Error('Failed to fetch quote!');
+  }
+};
 
-function Motivator({ stepsCompleted, targetSteps}) {
-     const [quote, setQuote] = useState("");
-     const [loading, setLoading] = useState(false);
+function Motivator() {
+  const [quote, setQuote] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-     useEffect(() => {
-          // fetching a random quote
-          const fetchQuote = async () => {
-               setLoading(true);
-               try {
-                    const response = await fetch("http://api.forismatic.com/api/1.0/");
-                    const data = await response.json();
-                    setQuote(data[0].q);
-               } catch (error) {
-                    console.error("Cannot fetch quote", error);
-                    setQuote("Keep it up, you're doing great!");
-               } finally {
-                    setLoading(false);
-               }
-          };
+  useEffect(() => {
+    // Fetch quote when component mounts
+    const getQuote = async () => {
+      try {
+        const fetchedQuote = await fetchQuote();
+        setQuote(fetchedQuote);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getQuote();
+  }, []); // Run once on mount
 
-          fetchQuote();
-     }, []);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-     useEffect(() => {
-          // message based on progress
-          if (stepsCompleted === 0) {
-               setQuote("Getting started is never easy, but you got this! 💪🏽");
-          } else if (stepsCompleted < targetSteps / 2) {
-               // only if under half progress
-               if (!loading) {
-                    setQuote(quote);
-               }
-          } else if (stepsCompleted >= targetSteps) {
-               setQuote("Incredible! You've achieved your goal! 🎉");
-          } else {
-               setQuote("Making good progress, keep going! 🚀");
-          }
-     }, [stepsCompleted, targetSteps, quote, loading]);
+  if (error) {
+    return <p>{error}</p>;
+  }
 
-     return (
-          <div style={{ 
-               margin: "20px 0", 
-               padding: "15px", 
-               background: "#f9f9f9", 
-               borderRadius: "10px", 
-               textAlign: "center", 
-               fontStyle: "italic" 
-             }}>
-               <p>💡 {loading ? "Loading quote..." : quote}</p>
-           </div>
-     );
+  return (
+    <div className="motivator">
+      <p>"{quote}"</p>
+    </div>
+  );
 }
-
 
 export default Motivator;
